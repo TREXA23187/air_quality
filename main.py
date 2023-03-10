@@ -41,25 +41,24 @@ def if_contains_year(df, year):
 india_with_geo_month_mean_total = None
 # india_with_geo['StationId'].unique将得到StationId出现的所有唯一值 即所有的站点
 for station in india_with_geo['StationId'].unique():
-
     # 对每一个站点进行一次计算
     india_with_geo_station = india_with_geo[india_with_geo['StationId'] == station]
-    # 以19年为例，判断station是否有2019年的数据
-    if if_contains_year(india_with_geo_station, 2019):
-
-        # 选取属于2019年的数据
-        india_with_geo_year = india_with_geo_station.loc['2019']
-        # 按照月份进行groupby 计算AQI的平均值
-        india_with_geo_month_mean = india_with_geo_year.reset_index().groupby(pd.Grouper(key='Date', axis=0, freq='M'))[
-            'AQI'].mean()
-        # 将计算得到的平均值 和 StationId整合作为一个 DataFrame
-        india_with_geo_month_mean_df = pd.DataFrame({'StationId': [station for i in india_with_geo_month_mean],
-                                                     'AQI_Monthly_Mean': india_with_geo_month_mean})
-        # 合并到存放之前其他站点月均值的india_with_geo_month_mean_total中
-        india_with_geo_month_mean_total = pd.concat([india_with_geo_month_mean_total, india_with_geo_month_mean_df])
+    # 15-20年的数据
+    for year in ['2015', '2016', '2017', '2018', '2019', '2020']:
+        if if_contains_year(india_with_geo_station, int(year)):
+            # 选取属于2019年的数据
+            india_with_geo_year = india_with_geo_station.loc[year]
+            # 按照月份进行groupby 计算AQI的平均值
+            india_with_geo_month_mean = \
+                india_with_geo_year.reset_index().groupby(pd.Grouper(key='Date', axis=0, freq='M'))[
+                    'AQI'].mean()
+            # 将计算得到的平均值 和 StationId整合作为一个 DataFrame
+            india_with_geo_month_mean_df = pd.DataFrame({'StationId': [station for i in india_with_geo_month_mean],
+                                                         'AQI_Monthly_Mean': india_with_geo_month_mean})
+            # 合并到存放之前其他站点月均值的india_with_geo_month_mean_total中
+            india_with_geo_month_mean_total = pd.concat([india_with_geo_month_mean_total, india_with_geo_month_mean_df])
 
 # 最终把每个station的月平均整合，得到所有的2019年station每个月的平均值
 print(india_with_geo_month_mean_total)
-
 
 # 整合2015年到2020年的
