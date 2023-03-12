@@ -1,4 +1,8 @@
 import pandas as pd
+import matplotlib.pyplot as plt
+import warnings
+
+warnings.filterwarnings("ignore")
 
 # 将csv文件通过pandas读进来 此时读入的csv以DataFrame的形式来提供很多帮助
 india = pd.read_csv('output/station_day_impute.csv')
@@ -36,6 +40,11 @@ def if_contains_year(df, year):
     return False
 
 
+def get_geometry_by_station(station_id):
+    res = india_with_geo_station[india_with_geo_station['StationId'] == station_id]
+    print(res)
+
+
 # 整理出每个站点每年每个月的平均值
 # 按地点分类，得到每个地点在19年有数据的月份的平均值
 india_with_geo_month_mean_total = None
@@ -59,6 +68,16 @@ for station in india_with_geo['StationId'].unique():
             india_with_geo_month_mean_total = pd.concat([india_with_geo_month_mean_total, india_with_geo_month_mean_df])
 
 # 最终把每个station的月平均整合，得到所有的2019年station每个月的平均值
-print(india_with_geo_month_mean_total)
 
-# 整合2015年到2020年的
+import geopandas as gpd
+from pyproj import CRS
+
+CRS_4326 = CRS('epsg:4326')
+
+india_with_geo_month_mean_2019 = india_with_geo_month_mean_total.loc['2019']
+# india_with_geo_month_mean_2019['latitude'] = india_with_geo_month_mean_2019.apply
+
+
+station_geo_map = {}
+for i in range(len(geometry['StationId'])):
+    station_geo_map[geometry['StationId'][i]] = (geometry['latitude'][i], geometry['longitude'][i])
