@@ -40,11 +40,6 @@ def if_contains_year(df, year):
     return False
 
 
-def get_geometry_by_station(station_id):
-    res = india_with_geo_station[india_with_geo_station['StationId'] == station_id]
-    print(res)
-
-
 # 整理出每个站点每年每个月的平均值
 # 按地点分类，得到每个地点在19年有数据的月份的平均值
 india_with_geo_month_mean_total = None
